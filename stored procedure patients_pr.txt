@@ -1,0 +1,62 @@
+USE [dbaugust]
+GO
+/****** Object:  StoredProcedure [dbo].[patients_pr]    Script Date: 21-12-2023 13:45:23 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+ALTER PROCEDURE [dbo].[patients_pr]
+(
+  @Pid int,
+  @pname varchar(30)='',
+  @gender varchar(10)='',
+  @cold varchar(1)='Y',
+  @fever varchar(1)='Y',
+  @other varchar(1)='Y',
+  @adress varchar(100)='',
+  @dname varchar(30)='',
+  @date date='',
+  @action varchar(30)
+)	
+AS
+BEGIN
+	if @action='select'
+    begin
+	if @Pid=0
+	select * from patients;
+	else
+	select * from patients where Pid=@Pid;
+	end
+
+	if @action = 'insert'
+	begin
+	insert into patients
+	select @Pid,@pname,@gender,@cold,@fever,@other,@adress,@dname,@date;
+	end
+
+	if @action = 'update'
+	begin
+	update patients set
+	Pid = @Pid,
+	pname = @pname,
+	gender = @gender,
+	cold = @cold,
+	fever = @fever,
+	other = @other,
+	adress = @adress,
+	dname = @dname,
+	date = @date where Pid = @Pid;
+	end
+
+	if @action = 'delete'
+	begin
+	delete from patients where Pid= @Pid;
+	end
+
+	if @action = 'getmax'
+	begin
+	select max(Pid)+1 from patients;
+	end
+END
